@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -16,6 +18,7 @@ public class BooKeepy {
 		SpringApplication.run(BooKeepy.class, args);
 	}
 	
+	
 	@Bean
 	public OpenAPI customOpenAPI(@Value("${application-description}") String appDescription,
 			@Value("${application-version}") String appVersion) {
@@ -26,6 +29,16 @@ public class BooKeepy {
 				.contact(new Contact().name("Pete João Chiboleca").email("pete9450@gmail.com").url("https://github.com/DanikOfficial/BookDatabase"))
 				.description(appDescription)
 				.version(appVersion));
+		
+	}
+	
+	@RestController
+	class HelloController {
+		
+		@GetMapping("/")
+		public String hello() {
+			return "Hello World";
+		}
 		
 	}
 
