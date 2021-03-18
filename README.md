@@ -7,7 +7,6 @@ Concise Documentation: <https://bookeepyapi.netlify.app/>
 
 **Contact information:**  
 Pete João Chiboleca  
-<https://github.com/DanikOfficial/BookDatabase>  
 pete9450@gmail.com  
 
 #### PUT 
