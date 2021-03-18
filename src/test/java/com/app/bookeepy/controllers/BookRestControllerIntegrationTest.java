@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class BookRestControllerIntegrationTest {
 
 	@Autowired
-	private MockMvc mvc;
+	private MockMvc mvc;			
 
 	@Autowired
 	private ObjectMapper objectMapper;
