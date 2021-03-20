@@ -18,6 +18,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.app.bookeepy.exceptions.BookAlreadyExistsException;
+import com.app.bookeepy.exceptions.BookException;
 import com.app.bookeepy.exceptions.BookNotFoundException;
 import com.app.bookeepy.exceptions.ImageNotFoundException;
 import com.app.bookeepy.exceptions.InvalidBookStatusException;
@@ -36,6 +37,15 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(InvalidBookStatusException.class)
 	public ResponseEntity<Object> handleInvalidBookStatusException(InvalidBookStatusException ex, WebRequest request) {
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("status", "fail");
+		body.put("message", ex.getMessage());
+		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(BookException.class)
+	public ResponseEntity<Object> handleInvalidBookStatusException(BookException ex, WebRequest request) {
 		Map<String, Object> body = new LinkedHashMap<>();
 		body.put("timestamp", LocalDateTime.now());
 		body.put("status", "fail");
@@ -66,6 +76,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
 		Map<String, String> errors = new LinkedHashMap<>();
+
 		ex.getBindingResult().getAllErrors().forEach((error) -> {
 			String fieldName = ((FieldError) error).getField();
 			String errorMessage = error.getDefaultMessage();

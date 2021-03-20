@@ -53,7 +53,7 @@ public class ImageServiceImpl implements ImageService {
 	@Override
 	public void removeImage(Long id) {
 		Image image = findImageById(id);
-		imageRepository.deleteById(id);
+		imageRepository.delete(image);
 	}
 
 	@Override
@@ -72,6 +72,12 @@ public class ImageServiceImpl implements ImageService {
 		Query query = em.createNativeQuery(removeSQL);
 		query.setParameter("id", bookId);
 		query.executeUpdate();
+		
+		final String removeDefaultCoverSQL = "DELETE FROM images WHERE image_location = 'Default Location' AND book_id = :id";
+		query = em.createNativeQuery(removeDefaultCoverSQL);
+		query.setParameter("id", bookId);
+		query.executeUpdate();
+		
 
 		Image image = findImageById(imageId);
 

@@ -2,20 +2,25 @@ package com.app.bookeepy.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import com.app.bookeepy.dto.BookView;
 import com.app.bookeepy.entity.Book;
 
 @Repository
-public interface BookRepository extends JpaRepository<Book, Long> {
+public interface BookRepository extends JpaRepository<Book, Long>, PagingAndSortingRepository<Book, Long> {
 
-    @Query(value = "select b.id as id, b.title as title, b.author as author, b.status as status," +
-            "(select i.image_url from images i where i.book_id = b.id and i.is_cover = TRUE) " +
-            "as image_url from books b", nativeQuery = true)
-    public List<BookView> findAllBooks();
-    
+	@Query(value = "SELECT b.id as id, b.title as title, b.author as author, b.status as status, i.image_url as image_url FROM books b INNER JOIN "
+			+ "images i ON b.id = i.book_id WHERE i.is_cover = TRUE order by id", nativeQuery = true)
+	public List<BookView> findAllBooks();
+
+	@Query(value = "SELECT b.id as id, b.title as title, b.author as author, b.status as status, i.image_url as image_url FROM books b INNER JOIN "
+			+ "images i ON b.id = i.book_id WHERE i.is_cover = TRUE order by id", nativeQuery = true)
+	Page<BookView> findBooks(Pageable pageable);
 
 }

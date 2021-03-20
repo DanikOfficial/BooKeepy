@@ -1,6 +1,7 @@
 package com.app.bookeepy.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -51,8 +52,22 @@ public class BookController {
 					content = @Content(mediaType = "application/json", 
 					array = @ArraySchema(schema = @Schema(implementation = BookView.class)))) })
 	@GetMapping(value = "/books", produces = "application/json")
-	public ResponseEntity<List<BookView>> getAllBooks() {
+	public ResponseEntity<List<BookView>> findAllBooks() {
 		return new ResponseEntity<>(bookService.findAllBooks(), HttpStatus.OK);
+	}
+	
+	@Operation(summary = "Fetch books using pagination.", description = "Fetch books using paging number, page size is 30.", method = "GET", 
+			parameters = {
+			@Parameter(description = "Number of the page.", name = "page", allowEmptyValue = false) })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Fetched the books of the specified page.", 
+					content = { 
+					@Content(mediaType = "application/json", 						
+							array = @ArraySchema(schema = @Schema(implementation = BookView.class))) 
+					})})
+	@GetMapping(value = "/books/page/{page}", produces = "application/json")
+	public ResponseEntity<Map<String, Object>> findBooks(@PathVariable("page") int page) {
+		return new ResponseEntity<Map<String,Object>>(bookService.findBooks(page), HttpStatus.OK);
 	}
 
 	@Operation(summary = "Fetches all books based on the specified book status.",

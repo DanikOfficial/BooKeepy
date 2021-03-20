@@ -1,22 +1,30 @@
 package com.app.bookeepy.service.impl;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.app.bookeepy.dto.BookView;
 import com.app.bookeepy.entity.Book;
+import com.app.bookeepy.entity.Image;
 import com.app.bookeepy.exceptions.BookAlreadyExistsException;
+import com.app.bookeepy.exceptions.BookException;
 import com.app.bookeepy.exceptions.BookNotFoundException;
 import com.app.bookeepy.exceptions.InvalidBookStatusException;
 import com.app.bookeepy.repository.BookRepository;
 import com.app.bookeepy.repository.ImageRepository;
 import com.app.bookeepy.service.BookService;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -34,6 +42,8 @@ public class BookServiceImpl implements BookService {
 	public Book storeBook(Book book) {
 		// Validates ISBN
 		isbnExists(book.getIsbn());
+		
+		validateCover(book);
 
 		return bookRepository.save(book);
 	}
@@ -134,4 +144,39 @@ public class BookServiceImpl implements BookService {
 
 	}
 
+	@Override
+	public Map<String, Object> findBooks(int page) {
+
+		Map<String, Object> data = new LinkedHashMap<String, Object>();
+		Page<BookView> results = bookRepository.findBooks(PageRequest.of(page, 3));
+		
+		
+		data.put("page", results.getNumber());;
+		data.put("totalRecords", results.getTotalElements());
+		data.put("numPages", results.getTotalPages());
+		data.put("books", results.getContent());
+		
+		
+		return data;
+	}
+	
+	 /**
+	  * Validates if the book has a cover
+	  * Validates if the book has more than one cover
+	  * @param book
+	  */
+	private void validateCover(Book book) {
+		
+		// Counts the number of covers a book has
+		Long count = book.getImages().stream().filter(image -> image.getIsCover().equals(Boolean.TRUE)).count();
+		
+		// If the book as 2 covers or more throws this exception
+		if (count >= 2L) throw new BookException("Error: A book cannot have two covers!");
+		
+		// If the book has no cover, than assign a default cover
+		if (count.equals(0L)) book.getImages().add(new Image("Default Cover", "Default Location", Boolean.TRUE));
+		
+		book.getImages().forEach(image -> image.setBook(book));
+	}
+		
 }
