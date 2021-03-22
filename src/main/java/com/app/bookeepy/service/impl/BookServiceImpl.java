@@ -150,7 +150,7 @@ public class BookServiceImpl implements BookService {
 	public Map<String, Object> findBooks(int page) {
 
 		Map<String, Object> data = new LinkedHashMap<String, Object>();
-		Page<BookView> results = bookRepository.findBooks(PageRequest.of(page, 3));
+		Page<BookView> results = bookRepository.findBooks(PageRequest.of(page, 30));
 		
 		
 		data.put("page", results.getNumber());;
