@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -40,7 +40,7 @@ public class Image {
 
 	@NonNull
 	@Column(nullable = false)
-	@NotBlank(message = "Error: The image url is mandatory!")
+	@Pattern(regexp = "/\\.(gif|jpe?g|tiff?|png|webp|bmp)$/i", message = "Error: The specified image url is invalid!")
 	private String image_url;
 
 	@NonNull
