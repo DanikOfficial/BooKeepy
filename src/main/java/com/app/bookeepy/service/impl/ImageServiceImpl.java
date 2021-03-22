@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.app.bookeepy.entity.Book;
 import com.app.bookeepy.entity.Image;
+import com.app.bookeepy.exceptions.ImageException;
 import com.app.bookeepy.exceptions.ImageNotFoundException;
 import com.app.bookeepy.repository.ImageRepository;
 import com.app.bookeepy.service.BookService;
@@ -33,6 +34,25 @@ public class ImageServiceImpl implements ImageService {
 	@Transactional
 	public List<Image> addImages(Long bookId, List<Image> images) {
 		Book book = bookService.findBookById(bookId);
+		
+		// Checks wether the new images has a cover
+		Long count = images.stream().filter(image -> image.getIsCover().equals(Boolean.TRUE)).count();
+		
+		if (count >= 2L) throw new ImageException("Error: A book cannot have two covers!");
+		
+		// If the new images has a cover, then unset the old cover and deletes the Default Location if is there
+		if (count.equals(1L)) {
+			final String removeSQL = "UPDATE images SET is_cover = FALSE WHERE book_id = :id AND is_cover = TRUE";
+			Query query = em.createNativeQuery(removeSQL);
+			query.setParameter("id", bookId);
+			query.executeUpdate();
+			
+			final String removeDefaultCoverSQL = "DELETE FROM images WHERE image_location = 'Default Location' AND book_id = :id";
+			query = em.createNativeQuery(removeDefaultCoverSQL);
+			query.setParameter("id", bookId);
+			query.executeUpdate();
+		}
+		
 		book.addImages(images);
 		/*images.forEach(image -> image.setBook(book));
 		return imageRepository.saveAll(images);*/

@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.app.bookeepy.exceptions.BookAlreadyExistsException;
 import com.app.bookeepy.exceptions.BookException;
 import com.app.bookeepy.exceptions.BookNotFoundException;
+import com.app.bookeepy.exceptions.ImageException;
 import com.app.bookeepy.exceptions.ImageNotFoundException;
 import com.app.bookeepy.exceptions.InvalidBookStatusException;
 
@@ -45,7 +46,16 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler(BookException.class)
-	public ResponseEntity<Object> handleInvalidBookStatusException(BookException ex, WebRequest request) {
+	public ResponseEntity<Object> handleInvalidBookException(BookException ex, WebRequest request) {
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("status", "fail");
+		body.put("message", ex.getMessage());
+		return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(ImageException.class)
+	public ResponseEntity<Object> handleImageException(ImageException ex, WebRequest request) {
 		Map<String, Object> body = new LinkedHashMap<>();
 		body.put("timestamp", LocalDateTime.now());
 		body.put("status", "fail");
