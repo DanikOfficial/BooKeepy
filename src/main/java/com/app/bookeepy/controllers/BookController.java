@@ -46,35 +46,25 @@ public class BookController {
 
 	@Operation(summary = "Fetches all the books.", method = "GET")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Fetched all Books from the Database.",
-					content = @Content(mediaType = "application/json", 
-					array = @ArraySchema(schema = @Schema(implementation = BookView.class)))) })
+			@ApiResponse(responseCode = "200", description = "Fetched all Books from the Database.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BookView.class)))) })
 	@GetMapping(value = "/books", produces = "application/json")
 	public ResponseEntity<List<BookView>> findAllBooks() {
 		return new ResponseEntity<>(bookService.findAllBooks(), HttpStatus.OK);
 	}
-	
-	@Operation(summary = "Fetch books using pagination.", description = "Fetch books using paging number, page size is 30.", method = "GET", 
-			parameters = {
+
+	@Operation(summary = "Fetch books using pagination.", description = "Fetch books using paging number, page size is 30.", method = "GET", parameters = {
 			@Parameter(description = "Number of the page.", name = "page", allowEmptyValue = false) })
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Fetched the books of the specified page.", 
-					content = { 
-					@Content(mediaType = "application/json", 						
-							array = @ArraySchema(schema = @Schema(implementation = BookView.class))) 
-					})})
+			@ApiResponse(responseCode = "200", description = "Fetched the books of the specified page.", content = {
+					@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BookView.class))) }) })
 	@GetMapping(value = "/books/page/{page}", produces = "application/json")
 	public ResponseEntity<Map<String, Object>> findBooks(@PathVariable("page") int page) {
-		return new ResponseEntity<Map<String,Object>>(bookService.findBooks(page), HttpStatus.OK);
+		return new ResponseEntity<Map<String, Object>>(bookService.findBooks(page), HttpStatus.OK);
 	}
 
-	@Operation(summary = "Fetches all books based on the specified book status.",
-			method = "GET", parameters = @Parameter(description = "The status to be filtered", 
-			name = "status", allowEmptyValue = false))
+	@Operation(summary = "Fetches all books based on the specified book status.", method = "GET", parameters = @Parameter(description = "The status to be filtered", name = "status", allowEmptyValue = false))
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Fetched all books based on book status.", 
-					content = @Content(mediaType = "application/json", 
-					array = @ArraySchema(schema = @Schema(implementation = BookView.class)))),
+			@ApiResponse(responseCode = "200", description = "Fetched all books based on book status.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BookView.class)))),
 			@ApiResponse(responseCode = "400", description = "Invalid book status.", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = GenericErrors.class)) }) })
 	@GetMapping(value = "/books/{status}", produces = "application/json")
@@ -82,16 +72,11 @@ public class BookController {
 		return new ResponseEntity<>(bookService.findBooksByStatus(status), HttpStatus.OK);
 	}
 
-	@Operation(summary = "Fetch using an Id.", description = "Fetch a book using its Id.", method = "GET", 
-			parameters = {
+	@Operation(summary = "Fetch using an Id.", description = "Fetch a book using its Id.", method = "GET", parameters = {
 			@Parameter(description = "id of the book to be fetched.", name = "id", allowEmptyValue = false) })
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Fetched the book of the specified id and it's images.", 
-					content = { 
-					@Content(mediaType = "application/json", 
-							array = @ArraySchema(arraySchema = @Schema(implementation = Image.class)), 
-							schema = @Schema(implementation = Book.class)) 
-					}),
+			@ApiResponse(responseCode = "200", description = "Fetched the book of the specified id and it's images.", content = {
+					@Content(mediaType = "application/json", array = @ArraySchema(arraySchema = @Schema(implementation = Image.class)), schema = @Schema(implementation = Book.class)) }),
 			@ApiResponse(responseCode = "404", description = "Could not find the book.", content = @Content) })
 	@GetMapping(value = "/book/{id}", produces = "application/json")
 	public ResponseEntity<Book> getBook(@PathVariable("id") Long id) {
@@ -117,13 +102,13 @@ public class BookController {
 	}
 
 	@Operation(summary = "Removes a book.", description = "Removes a book from the Database!", method = "DELETE", parameters = @Parameter(allowEmptyValue = false, name = "id", description = "id of the book that will be removed."))
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Successfully removed the book."),
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Successfully removed the book.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))),
 			@ApiResponse(responseCode = "404", description = "Book doesn't exist.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericErrors.class))) })
 	@DeleteMapping(value = "/book/{id}", produces = "application/json")
-	public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-		bookService.deleteBook(id);
+	public ResponseEntity<Book> deleteBook(@PathVariable Long id) {
 
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(bookService.deleteBook(id), HttpStatus.OK);
 	}
 
 	@Operation(summary = "Updates a book.", description = "Updates a book from the Database!", method = "PUT", parameters = @Parameter(allowEmptyValue = false, name = "id", description = "id of the book that will be updated."), requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = BookRequestObject.class))))
