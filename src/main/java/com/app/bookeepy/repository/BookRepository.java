@@ -16,11 +16,11 @@ import com.app.bookeepy.entity.Book;
 public interface BookRepository extends JpaRepository<Book, Long>, PagingAndSortingRepository<Book, Long> {
 
 	@Query(value = "SELECT b.id as id, b.title as title, b.author as author, b.status as status, i.image_url as image_url FROM books b INNER JOIN "
-			+ "images i ON b.id = i.book_id WHERE i.is_cover = TRUE order by id", nativeQuery = true)
+			+ "images i ON b.id = i.book_id WHERE i.is_cover = TRUE order by id desc", nativeQuery = true)
 	public List<BookView> findAllBooks();
 
 	@Query(value = "SELECT b.id as id, b.title as title, b.author as author, b.status as status, i.image_url as image_url FROM books b INNER JOIN "
-			+ "images i ON b.id = i.book_id WHERE i.is_cover = TRUE order by id", nativeQuery = true)
+			+ "images i ON b.id = i.book_id WHERE i.is_cover = TRUE order by id desc", nativeQuery = true)
 	Page<BookView> findBooks(Pageable pageable);
 
 }
