@@ -1,5 +1,7 @@
 package com.app.bookeepy.entity;
 
+import com.app.bookeepy.entity.groups.BookCreation;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class Book {
     private String isbn;
 
     @Valid
-    @Size(min = 1, message = "Error: The book must have at least one image.")
+    @Size(min = 1, message = "Error: The book must have at least one image.", groups = {BookCreation.class})
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "book", fetch = FetchType.LAZY)
     private List<Image> images = new ArrayList<>();
 

@@ -5,11 +5,13 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.app.bookeepy.entity.groups.BookCreation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -91,12 +93,11 @@ public class BookController {
 			@ApiResponse(responseCode = "409", description = "Failed to add new book because the specified ISBN already exists.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericErrors.class))),
 			@ApiResponse(responseCode = "400", description = "Constraints violated.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrors.class))) })
 	@PostMapping(value = "/books", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Book> newBook(@RequestBody @Valid Book book) {
+	public ResponseEntity<Book> newBook(@RequestBody @Validated(BookCreation.class) Book book) {
 
 		Book newBook = bookService.storeBook(book);
 
 		MultiValueMap<String, String> headers = new HttpHeaders();
-		headers.set("message", "Book successfully stored");
 
 		return new ResponseEntity<>(newBook, headers, HttpStatus.CREATED);
 	}

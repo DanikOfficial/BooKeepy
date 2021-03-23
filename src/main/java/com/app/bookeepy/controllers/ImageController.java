@@ -60,11 +60,10 @@ public class ImageController {
 	@Operation(summary = "Adds images.", description = "Adds images associated with a book!", method = "POST",
 			parameters = @Parameter(allowEmptyValue = false, name = "id", description = "id of the book."),
 			requestBody  = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json"
-			, schema = @Schema(implementation = ImageRequestObject.class))))
+			, array = @ArraySchema(schema = @Schema(implementation = Image.class)))))
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Successfully added images.",
-					content = @Content(mediaType = "application/json", 
-					array = @ArraySchema(arraySchema = @Schema(implementation = Image.class)))),
+					content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Image.class)))),
 			@ApiResponse(responseCode = "404", description = "The specified Book doesn't exist.",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericErrors.class))),
 			@ApiResponse(responseCode = "400", description = "Constraints violated.",

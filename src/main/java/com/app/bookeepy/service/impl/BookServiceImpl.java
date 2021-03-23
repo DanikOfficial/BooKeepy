@@ -122,6 +122,7 @@ public class BookServiceImpl implements BookService {
 				throw new BookAlreadyExistsException("Error: There's already book with this ISBN: " + isbn);
 
 		} catch (NoResultException ex) {
+			throw new BookAlreadyExistsException("Error: There's already book with this ISBN: " + isbn);
 
 		}
 
