@@ -114,14 +114,14 @@ public class BookController {
 
 	@Operation(summary = "Updates a book.", description = "Updates a book from the Database!", method = "PUT", parameters = @Parameter(allowEmptyValue = false, name = "id", description = "id of the book that will be updated."), requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", schema = @Schema(implementation = BookRequestObject.class))))
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Successfully updated the book.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Book.class))),
+			@ApiResponse(responseCode = "200", description = "Successfully updated the book.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BookView.class))),
 			@ApiResponse(responseCode = "404", description = "The specified Book doesn't exist.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericErrors.class))),
 			@ApiResponse(responseCode = "409", description = "Failed to add new book because the specified ISBN already exists.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GenericErrors.class))),
 			@ApiResponse(responseCode = "400", description = "Constraints violated.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ValidationErrors.class))) })
 	@PutMapping(value = "/book/{id}", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Book> updateBook(@RequestBody @Valid Book book, @PathVariable("id") Long id) {
+	public ResponseEntity<BookView> updateBook(@RequestBody @Valid Book book, @PathVariable("id") Long id) {
 		book.setId(id);
-		Book updatedBook = bookService.updateBook(book);
+		BookView updatedBook = bookService.updateBook(book);
 
 		return new ResponseEntity<>(updatedBook, HttpStatus.OK);
 	}

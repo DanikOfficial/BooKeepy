@@ -13,7 +13,7 @@ public interface BookService {
 
     Book storeBook(Book book);
 
-    Book updateBook(Book book);
+    BookView updateBook(Book book);
 
     Book deleteBook(Long id);
 

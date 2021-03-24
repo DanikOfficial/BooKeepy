@@ -102,12 +102,14 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public Book updateBook(Book book) {
+	public BookView updateBook(Book book) {
 
 		// Validate the ISBN
 		isbnExists(book.getId(), book.getIsbn());
 
-		return bookRepository.save(book);
+		bookRepository.save(book);
+
+		return bookRepository.getBookAfterUpdate(book.getId());
 	}
 
 	private void isbnExists(String isbn) {
